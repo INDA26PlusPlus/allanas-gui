@@ -16,9 +16,9 @@ fn main() {
     println!("{:?}", game.status());
     println!("{:?}", game.position.legal_position());
 
-    assert!(game.play(sq("e2"), sq("e4")));
+    assert!(game.play(sq("e2"), sq("e4"), None));
     assert_eq!(game.turn(), Color::Black);
-    assert!(!game.play(sq("e4"), sq("e5")));
+    assert!(!game.play(sq("e4"), sq("e5"), None));
     println!("{:?}", game.turn());
     println!("{:?}", game.status());
     println!("{:?}", game.piece_at(sq("e1")));

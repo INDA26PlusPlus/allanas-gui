@@ -5,6 +5,14 @@ pub struct Game {
     pub legal: Vec<Move>,
 }
 
+pub const PROMOTIONS_CHOICESAA: [PieceTypes; 4] =
+    [
+    PieceTypes::Queen,
+    PieceTypes::Rook,
+    PieceTypes::Bishop,
+    PieceTypes::Knight
+    ];
+
 impl Game {
     pub fn new() -> Game {
         let position = Position::default();
@@ -26,7 +34,16 @@ impl Game {
 
     pub fn is_legal(&self, from: Place, to: Place) -> bool {
         let played_move = from.goto(&to);
-        return self.legal.contains(&played_move)
+        return self.legal.contains(&played_move) || PROMOTIONS_CHOICESAA.iter().any(|t| self.legal.contains(&played_move.into_promotion(Some(*t))))
+    }
+
+    // true when a pawn is on the backrank so ui has to ask
+    pub fn is_promotion(&self, from: Place, to: Place) -> bool {
+        let is_pawn = matches!(
+            self.piece_at(from).map(|p| p.piece_type),
+            Some(PieceTypes::Pawn { .. })
+        );
+        return is_pawn && (to.row == 0 || to.row == 7)
     }
 
     pub fn targets_from(&self, from: Place) -> Vec<Place> {
@@ -45,8 +62,12 @@ impl Game {
         return targets
     }
 
-    pub fn play(&mut self, from: Place, to: Place) -> bool {
-        let wanttoplay = from.goto(&to);
+    pub fn play(&mut self, from: Place, to: Place, promote_to: Option<PieceTypes>) -> bool {
+        let wanttoplay = if self.is_promotion(from, to) {
+            from.goto(&to).into_promotion(Some(promote_to.unwrap_or(PieceTypes::Queen)))
+        } else {
+            from.goto(&to)
+        };
         if !self.legal.contains(&wanttoplay) { 
             return false; 
         }
