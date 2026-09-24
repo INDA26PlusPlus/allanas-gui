@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 axelwas-chess = { path = "axelwas-chess" }
+ggez = "0.10.0"

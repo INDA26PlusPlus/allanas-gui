@@ -46,7 +46,7 @@ impl Game {
         return is_pawn && (to.row == 0 || to.row == 7)
     }
 
-    pub fn targets_from(&self, from: Place) -> Vec<Place> {
+    pub fn legal_moves(&self, from: Place) -> Vec<Place> {
         let mut targets = Vec::new();
         for row in 0..8 {
             for file in 0..8 {
